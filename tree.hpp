@@ -89,8 +89,8 @@ class RTree {
         Node* leaf = ChooseLeaf(root, point);
         // 2) if there is room, add the point.
         //      Else, split and add the point to one of them.
-        if(leaf->children.size()+1 <= M){
-            leaf->children.push_back( BranchEntry{MBR{0,0}, } );
+        if(leaf->entries.children.size()+1 <= M){
+            leaf->entries.children.push_back( BranchEntry{MBR{0,0}, } );
         }
         // 3) Walk up the tree and adjust MBB's and potentially split.
         
