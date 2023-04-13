@@ -71,6 +71,7 @@ struct Node {
 */
 class RTree {
     Node* root;
+    MBR root_box;
     int M; // Maximum number of entries per node. An entry is a child node or a point.
     
     RTree(int M) {
@@ -85,8 +86,8 @@ class RTree {
     {
         //Find extremes on x-axis & y-axis
         float axis = 0;
-        MBR box1;
-        MBR box2;
+        int indexi;
+        int indexy;
         for (int i = 0; i < leaf->entries.size(); i++)
         {
             for (int y = i+1; y < leaf->entries.size(); y++)
@@ -95,19 +96,54 @@ class RTree {
                 if (xdiff > axis)
                 {
                     axis = xdiff;
-                    box1 = leaf->entries[i].box;
-                    box2 = leaf->entries[y].box;
+                    indexi = i;
+                    indexy = y;
                 }
                 float ydiff = abs(leaf->entries[i].box.br.y - leaf->entries[y].box.tl.y);
                 if (ydiff > axis)
                 {
                     axis = ydiff;
-                    box1 = leaf->entries[i].box;
-                    box2 = leaf->entries[y].box;
+                    indexi = i;
+                    indexy = y;
                 }
             }
         }
-        //Make two new nodes with found boxes & remove from old node
+        //Make two new nodes with found boxes
+        NodeEntry* node1 = new NodeEntry();
+        node1->box = leaf->entries[indexi].box;
+        node1->data.child = new Node();
+        NodeEntry* node2 = new NodeEntry();
+        node2->box = leaf->entries[indexy].box;
+        node2->data.child = new Node();
+        
+
+        //Remove from old leaf
+        leaf->entries.erase(leaf->entries.begin() + indexi);
+        leaf->entries.erase(leaf->entries.begin() + indexy);
+
+        
+        //
+        for (int i = 0; i < leaf->entries.size(); i++)
+        {
+            MBR newBox1 = node1->box.If_Engulf(leaf->entries[i].box);
+            MBR newBox2 = node2->box.If_Engulf(leaf->entries[i].box);
+            if (newBox1.Area() - node1->box.Area() > newBox2.Area() - node2->box.Area())
+            {
+                node1->data.child->entries.push_back(leaf->entries[i]);
+            }else
+            {
+                node2->data.child->entries.push_back(leaf->entries[i]);
+            }
+            
+
+        }
+
+        parent->entries.push_back(*node1);
+        parent->entries.push_back(*node2);
+
+        //Remove old node
+        leaf->entries.clear();
+        delete leaf;
     }
 
     void RecursiveInsert(Node* node, Node* parent , Point point) {
