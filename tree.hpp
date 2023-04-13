@@ -3,6 +3,7 @@
 #include <iostream>
 #include <list>
 #include <vector>
+#include <assert.h>
 using namespace std;
 
 /*
@@ -21,15 +22,18 @@ using namespace std;
 
 */
 
+struct MBR;
 struct Point {
     float x,y;
+    MBR GetMBR() {return MBR{Point{x,y},Point{x,y}};}
+    bool operator==(Point rhs) { return x==rhs.x&&y==rhs.y;}
 };
 
 struct MBR {
     Point tl,br; // top left point, bottom right point.
     int Area(){ return abs(br.x-tl.x) * abs(br.y-tl.y); }
     
-    bool Contains(Point point) { return point.x>=tl.x && point.x<=br.x && point.y>=tl.y && point.y<=br.y; }
+    bool Contains(MBR object) { return object.tl.x>=tl.x && object.br.x<=br.x && object.tl.y>=tl.y && object.br.y<=br.y; }
 
     // Returns a new Minimum Bounding Rectangle if that box also has 'object' in it.
     MBR If_Engulf(MBR object) { return MBR{
@@ -57,6 +61,14 @@ struct Node {
     // Parent stores children's boxes and pointers.
     bool is_leaf; // Whether entries' data union is either 'child' or 'point'.
     vector<NodeEntry> entries;
+    MBR GetMBR() {
+        assert(entries.size() > 0);
+        MBR new_mbr = entries[0].box;
+        for( int i = 1;i < entries.size(); i++ ) {
+            new_mbr = new_mbr.If_Engulf(entries[i].box);
+        }
+        return new_mbr;
+    }
 };
 
 
@@ -146,7 +158,7 @@ class RTree {
         delete leaf;
     }
 
-    void RecursiveInsert(Node* node, Node* parent , Point point) {
+    void RecursiveInsert(Node* node , Point point) {
         // if(node->is_leaf == true) {return node; }
         
         // Picks a leaf node to add 'point' into.
@@ -159,10 +171,11 @@ class RTree {
 
             int area_before = child.box.Area();
 
-            MBR new_box = child.box.If_Engulf(point);
+            MBR new_box = child.box.If_Engulf( point.GetMBR() );
             int new_box_area = new_box.Area();
 
             int diff = new_box_area - area_before;
+            assert(diff >= 0);
             
             if(target_node == nullptr) {
                 target_node = child.data.child; // This is fine because of the node->is_leaf check above.
@@ -192,17 +205,75 @@ class RTree {
     }
 
     void Insert(Point point) {
-        RecursiveInsert(root, nullptr ,point);
+        RecursiveInsert(root ,point);
     }
 
-    void RecursiveDelete(Node* node, Point point) {
+    void PrintTree() {
+
+    }
+
+    // Returns whether the object is in this node path.
+    bool RecursiveDelete(Node* node, Point point, vector<Point>* to_be_deleted) {
+        bool ret = false;
+        vector<size_t> entries_to_die;
         // Find the node containing this item.
-        for( NodeEntry entry : node->entries ) {
+        for( size_t i = 0;i < node->entries.size(); i++ ) {
+            NodeEntry entry = node->entries[i];
 
+            if( !entry.box.Contains( point.GetMBR() ) ) {
+                continue;
+            }
+            // Entries are either more nodes or points.
+            if(node->is_leaf == false){
+                // all entries are nodes.
+                bool found_leaf = RecursiveDelete(entry.data.child, point, to_be_deleted);
+                if(!found_leaf) {
+                    continue; // We don't care about this node path.
+                }
+                ret = true; // We will return true in the future.
+                entry.box = entry.data.child->GetMBR();
+                // The object had a deletion! Check if it is too small.
+                if(entry.data.child->entries.size() < M/2) {
+
+                    if(entry.data.child->is_leaf) {
+                        // Copy their points (objects) into to_be_deleted.
+                        for( NodeEntry leaf_entry : entry.data.child->entries) {
+                            to_be_deleted->push_back(leaf_entry.data.point);
+                        }
+                    }
+                    
+                    // KILL
+                    entries_to_die.push_back(i);
+                }
+
+            }else if(point == entry.data.point) {
+                // all entries are points.
+                // So that means that this leaf node contains this point, which is this entry! Remove it.
+                node->entries.erase( node->entries.begin() + i );
+                return true; // Return true because we found the entry to be removed.
+            }
         }
+
+        // Destroy too-small entries.
+        for(size_t entry : entries_to_die) {
+            node->entries.erase(node->entries.begin() + entry);
+        }
+
+        if(node == root && node->entries.size() == 1) {
+            root = node->entries[0].data.child;
+            node->entries.clear();
+            delete node;
+        }
+
+        return ret;
     }
+
     void Delete(Point point) {
-        RecursiveDelete(root, point);
+        vector<Point> to_be_deleted;
+        RecursiveDelete(root, point, &to_be_deleted);
+        for(Point point : to_be_deleted) {
+            Insert(point);
+        }
     }
 
     void ClosestNeighbor(Point point) {
