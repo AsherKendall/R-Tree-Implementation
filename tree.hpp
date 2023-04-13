@@ -20,18 +20,22 @@ struct MBR {
     }; }
 };
 
+struct Node;
 struct BranchEntry {
     MBR box;
-    Node* child;
+
+    // This entry contains either a child or a point.
+    // This is determined by the Node holding it.
+    union {
+        Node* child;
+        Point point;
+    } data;
 };
 
 struct Node {
     // Parent stores children's boxes and pointers.
-    bool is_leaf;
-    union {
-        vector<BranchEntry> children;
-        vector<Point> points;
-    } entries;
+    bool is_leaf; // Whether entries' data union is either 'child' or 'point'.
+    vector<BranchEntry> entries;
 };
 
 
@@ -54,15 +58,15 @@ class RTree {
         root->is_leaf = true;
     }
 
-    Node* ChooseLeaf(Node* node, Point point) {
-        if(node->is_leaf == true) {return node; }
+    void RecursiveInsert(Node* node, Node* parent , Point point) {
+        // if(node->is_leaf == true) {return node; }
         
         // Picks a leaf node to add 'point' into.
         unsigned int min_diff = 0;
         Node* target_node = nullptr;
         
         // Find the node who's area will increase the least.
-        for(BranchEntry child : node->entries.children) {
+        for(BranchEntry child : node->entries) {
             
 
             int area_before = child.box.Area();
@@ -73,7 +77,7 @@ class RTree {
             int diff = new_box_area - area_before;
             
             if(target_node == nullptr) {
-                target_node = child.child;
+                target_node = child.data.child; // This is fine because of the node->is_leaf check above.
                 min_diff = diff;
                 continue;
             }else if(min_diff > diff) { // TODO: prefer nodes with less entries.
@@ -81,18 +85,24 @@ class RTree {
             }
         }
 
-        return ChooseLeaf(target_node, point);
+        // Adjust Node
+        
+        if (target_node == nullptr || target_node->is_leaf) {
+            // If there is room, add the point.
+            //   Else, split and add the point to one of them.
+            if(target_node->entries.size()+1 <= M){
+                target_node->entries.push_back( BranchEntry{ MBR{point,point}, {.point = point} } );
+            }else {
+                // split
+            }
+        }
+        // adjust this node. (Potentially split)
+        if( node->entries.size() > M) {
+            // Child split, time to split.
+        }
     }
 
     void Insert(Point point) {
-        // 1) find a leaf node.
-        Node* leaf = ChooseLeaf(root, point);
-        // 2) if there is room, add the point.
-        //      Else, split and add the point to one of them.
-        if(leaf->entries.children.size()+1 <= M){
-            leaf->entries.children.push_back( BranchEntry{MBR{0,0}, } );
-        }
-        // 3) Walk up the tree and adjust MBB's and potentially split.
-        
+        RecursiveInsert(root, nullptr ,point);
     }
 };
