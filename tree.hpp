@@ -5,6 +5,22 @@
 #include <vector>
 using namespace std;
 
+/*
+        The Coordinate Space
+
+      -y
+      |
+-x ---*-------------------- +x
+      |
+      |
+      |
+      |
+  
+      +y
+
+
+*/
+
 struct Point {
     float x,y;
 };
@@ -13,15 +29,20 @@ struct MBR {
     Point tl,br; // top left point, bottom right point.
     int Area(){ return abs(br.x-tl.x) * abs(br.y-tl.y); }
     
-    // Returns a new Minimum Bounding Rectangle if that box also has 'point' in it.
-    MBR If_Engulf(Point point) { return MBR{
-        Point{min(tl.x,point.x),min(tl.y,point.y)},
-        Point{max(br.x,point.x),max(br.y,point.y)}
+    bool Contains(Point point) { return point.x>=tl.x && point.x<=br.x && point.y>=tl.y && point.y<=br.y; }
+
+    // Returns a new Minimum Bounding Rectangle if that box also has 'object' in it.
+    MBR If_Engulf(MBR object) { return MBR{
+        Point{min(tl.x,object.tl.x),min(tl.y,object.tl.y)},
+        Point{max(br.x,object.br.x),max(br.y,object.br.y)}
     }; }
+
 };
 
 struct Node;
-struct BranchEntry {
+
+
+struct NodeEntry {
     MBR box;
 
     // This entry contains either a child or a point.
@@ -35,7 +56,7 @@ struct BranchEntry {
 struct Node {
     // Parent stores children's boxes and pointers.
     bool is_leaf; // Whether entries' data union is either 'child' or 'point'.
-    vector<BranchEntry> entries;
+    vector<NodeEntry> entries;
 };
 
 
@@ -97,7 +118,7 @@ class RTree {
         Node* target_node = nullptr;
         
         // Find the node who's area will increase the least.
-        for(BranchEntry child : node->entries) {
+        for(NodeEntry child : node->entries) {
             
 
             int area_before = child.box.Area();
@@ -122,7 +143,7 @@ class RTree {
             // If there is room, add the point.
             //   Else, split and add the point to one of them.
             if(target_node->entries.size()+1 <= M){
-                target_node->entries.push_back( BranchEntry{ MBR{point,point}, {.point = point} } );
+                target_node->entries.push_back( NodeEntry{ MBR{point,point}, {.point = point} } );
             }else {
                 // split
                 
@@ -137,4 +158,23 @@ class RTree {
     void Insert(Point point) {
         RecursiveInsert(root, nullptr ,point);
     }
+
+    void RecursiveDelete(Node* node, Point point) {
+        // Find the node containing this item.
+        for( NodeEntry entry : node->entries ) {
+
+        }
+    }
+    void Delete(Point point) {
+        RecursiveDelete(root, point);
+    }
+
+    void ClosestNeighbor(Point point) {
+
+    }
+
+    vector<Point> InRadius(Point point , float radius) {
+
+    }
+
 };
