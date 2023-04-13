@@ -58,6 +58,37 @@ class RTree {
         root->is_leaf = true;
     }
 
+
+
+    void LinearSplit(Node* leaf,Node* parent)
+    {
+        //Find extremes on x-axis & y-axis
+        float axis = 0;
+        MBR box1;
+        MBR box2;
+        for (int i = 0; i < leaf->entries.size(); i++)
+        {
+            for (int y = i+1; y < leaf->entries.size(); y++)
+            {
+                float xdiff = abs(leaf->entries[i].box.br.x - leaf->entries[y].box.tl.x);
+                if (xdiff > axis)
+                {
+                    axis = xdiff;
+                    box1 = leaf->entries[i].box;
+                    box2 = leaf->entries[y].box;
+                }
+                float ydiff = abs(leaf->entries[i].box.br.y - leaf->entries[y].box.tl.y);
+                if (ydiff > axis)
+                {
+                    axis = ydiff;
+                    box1 = leaf->entries[i].box;
+                    box2 = leaf->entries[y].box;
+                }
+            }
+        }
+        //Make two new nodes with found boxes & remove from old node
+    }
+
     void RecursiveInsert(Node* node, Node* parent , Point point) {
         // if(node->is_leaf == true) {return node; }
         
@@ -94,6 +125,7 @@ class RTree {
                 target_node->entries.push_back( BranchEntry{ MBR{point,point}, {.point = point} } );
             }else {
                 // split
+                
             }
         }
         // adjust this node. (Potentially split)
