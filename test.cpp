@@ -48,6 +48,7 @@ int main() {
     tree.Delete(Point{1,1});
 
     tree.PrintTree();
+    tree.CheckHealth();
     std::cout << "\n";
     return 0;
 }

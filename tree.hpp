@@ -24,7 +24,6 @@ using namespace std;
 
 struct Point {
     float x,y;
-    // MBR GetMBR() {return MBR{Point{x,y},Point{x,y}};}
     bool operator==(Point rhs) { return x==rhs.x&&y==rhs.y;}
 };
 
@@ -274,10 +273,6 @@ class RTree {
                 RecursivePrintTree(entry.data.child);
             }
         }
-        // cout << node->data << " ";  
-        // RecursivePrintTree(node->left);
-        // cout << ", ";
-        // RecursivePrintTree(node->right);
         cout << " ]";
     }
 
@@ -333,7 +328,6 @@ class RTree {
         }
 
         // Destroy too-small entries.
-        // for(size_t entry : entries_to_die) {
         if(removed_entry == true) {
             auto entrys_iter = node->entries.begin() + entry_to_die;
             delete entrys_iter->data.child;
@@ -347,6 +341,24 @@ class RTree {
         }
 
         return ret;
+    }
+
+    // returns the height of the tree.
+    int RecursiveCheckHealth(Node* node) {
+        assert(node->entries.size() <= M && node->entries.size() >= M/2);
+        if(node->is_leaf == true) {
+            return 0;
+        }
+        int height = -1;
+        for(NodeEntry entry : node->entries) {
+            int entry_height = RecursiveCheckHealth(entry.data.child);
+            if(height == -1){
+                height = entry_height;
+            }
+
+            assert(height == entry_height);
+        }
+        return height + 1;
     }
 
 public:
@@ -380,12 +392,14 @@ public:
         RecursivePrintTree(root.data.child);
     }
 
+    void CheckHealth() {
+        RecursiveCheckHealth(root.data.child);
+    }
+
     RTree(int M) {
         this->M = M;
         root.data.child = new Node;
         root.box = MBR{Point{-1,-1},Point{1,1}};
         root.data.child->is_leaf = true;
-        // root = new Node;
-        // root->is_leaf = true;
     }
 };
