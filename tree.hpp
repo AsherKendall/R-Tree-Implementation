@@ -1,9 +1,10 @@
-//http://www-db.deis.unibo.it/courses/SI-LS/papers/Gut84.pdf
+//  
 
 #include <iostream>
 #include <list>
 #include <vector>
 #include <assert.h>
+#include <queue>
 using namespace std;
 
 /*
@@ -382,9 +383,27 @@ public:
         }
     }
 
-    // void ClosestNeighbor(Point point) {
+    Node* FindLeaf(MBR QueryOBject,Node* node)
+    {
+        if (node->is_leaf)
+        {
+            return node;
+        }
+        
 
-    // }
+        for (int i = 0; i < node->entries.size(); i++)
+        {
+            if (node->GetMBR().Contains(QueryOBject))
+            {
+                FindLeaf(QueryOBject,node->entries[i].data.child);
+            }
+            
+        }
+    }
+
+    void ClosestNeighbor(Node* node,float dist) {
+        queue<Node> priorqeue();
+    }
 
     // vector<Point> InRadius(Point point , float radius) {
 
