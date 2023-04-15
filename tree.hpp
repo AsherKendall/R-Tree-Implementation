@@ -100,12 +100,12 @@ class RTree {
     NodeEntry root;
     int M; // Maximum number of entries per node. An entry is a child node or a point.
     
-    // Given a node and a point, returns child of node that will change its area the least by engulfing it.
-    NodeEntry* GetLeastAreaChange(Node* node, Point point) {
+    // Given a node and a point, returns index of child of node that will change its area the least by engulfing it.
+    size_t GetLeastAreaChange(Node* node, Point point) {
         assert(node->is_leaf == false);
 
         unsigned int min_diff = 0;
-        NodeEntry* target_node = nullptr;
+        size_t target_node = -1; // max integer
         for(int i = 0; i < node->entries.size(); i++) {
             NodeEntry* child = &node->entries[i];
 
@@ -117,19 +117,21 @@ class RTree {
             int diff = new_box_area - area_before;
             assert(diff >= 0);
             
-            if(target_node == nullptr) {
-                target_node = child; // This is fine because of the node->is_leaf check above.
+            if(target_node == -1) {
+                target_node = i; // This is fine because of the node->is_leaf check above.
                 min_diff = diff;
                 continue;
             }else if(min_diff > diff) { // TODO: prefer nodes with less entries.
                 min_diff = diff;
+                target_node = i;
             }
         }
         return target_node;
     }
 
-    void LinearSplit(Node* leaf,Node* parent)
+    void LinearSplit(size_t leaf_index,Node* parent)
     {
+        Node* leaf = parent->entries[leaf_index].data.child;
         //Find extremes on x-axis & y-axis
         float axis = 0;
         int indexi;
@@ -196,6 +198,7 @@ class RTree {
 
         }
 
+        parent->entries.erase(parent->entries.begin() + leaf_index);
         parent->entries.push_back(node1);
         parent->entries.push_back(node2);
 
@@ -207,10 +210,11 @@ class RTree {
     void RecursiveInsert(Node* node , Point point) {
         // Picks a leaf node to add 'point' into.
         NodeEntry* target_node = nullptr;
-        
+        size_t target_node_index = 0;
         // Find the node who's area will increase the least.
         if(node->is_leaf == false) {
-            target_node = GetLeastAreaChange(node, point);
+            target_node_index = GetLeastAreaChange(node, point);
+            target_node = &node->entries[target_node_index] ;
         }else{
             assert(node == root.data.child);
             target_node = &root;
@@ -229,15 +233,18 @@ class RTree {
         // If there is not room, split it.
         if(target_node->data.child->entries.size() > M) {
             // split
-            if(target_node == &root) {
+            if(target_node != &root) {
+                LinearSplit(target_node_index, node);
+            }
+
+            if(target_node == &root || node == root.data.child) {
                 NodeEntry new_root;
                 new_root.data.child = new Node;
                 new_root.data.child->is_leaf = false;
-                LinearSplit(target_node->data.child, new_root.data.child);
+                new_root.data.child->entries.push_back(root);
+                LinearSplit(0, new_root.data.child);
                 root = new_root;
                 root.box = root.data.child->GetMBR();
-            }else {
-                LinearSplit(target_node->data.child, node);
             }
         }
     }
