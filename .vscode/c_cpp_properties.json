@@ -8,7 +8,8 @@
                 "/usr/include/newlib/c++/10.3.1/arm-none-eabi",
                 "/usr/include/newlib/c++/10.3.1/tr1"
             ],
-            "defines": [],
+            "defines": [
+            ],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",
             "intelliSenseMode": "linux-clang-x64"

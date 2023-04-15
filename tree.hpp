@@ -181,6 +181,17 @@ class RTree {
 
         for (int i = 0; i < leaf->entries.size(); i++)
         {
+            if(node1.data.child->entries.size()+(leaf->entries.size()-i) == M/2) {
+                node1.data.child->entries.push_back(leaf->entries[i]);
+                node1.box = node1.box.If_Engulf(leaf->entries[i].box);
+                continue;
+            }
+            if(node2.data.child->entries.size()+(leaf->entries.size()-i) == M/2) {
+                node2.data.child->entries.push_back(leaf->entries[i]);
+                node2.box = node2.box.If_Engulf(leaf->entries[i].box);
+                continue;
+            }
+
             MBR new_box1 = node1.box.If_Engulf(leaf->entries[i].box);
             MBR new_box2 = node2.box.If_Engulf(leaf->entries[i].box);
             int diff1 = new_box1.Area() - node1.box.Area();
@@ -197,6 +208,9 @@ class RTree {
             
 
         }
+
+        assert(node1.data.child->entries.size() >= M/2);
+        assert(node2.data.child->entries.size() >= M/2);
 
         parent->entries.erase(parent->entries.begin() + leaf_index);
         parent->entries.push_back(node1);
@@ -228,8 +242,9 @@ class RTree {
         else {
             // Add the point to the child.
             target_node->data.child->entries.push_back( NodeEntry{ GetMBR(point), {.point = point} } );
-            target_node->box = target_node->data.child->GetMBR();
         }
+
+        target_node->box = target_node->data.child->GetMBR();
         // If there is not room, split it.
         if(target_node->data.child->entries.size() > M) {
             // split
@@ -237,7 +252,7 @@ class RTree {
                 LinearSplit(target_node_index, node);
             }
 
-            if(target_node == &root || node == root.data.child) {
+            if(target_node == &root || (node == root.data.child && node->entries.size() > M)) {
                 NodeEntry new_root;
                 new_root.data.child = new Node;
                 new_root.data.child->is_leaf = false;
@@ -301,14 +316,7 @@ class RTree {
                 entry.box = entry.data.child->GetMBR();
                 // The object had a deletion! Check if it is too small.
                 if(entry.data.child->entries.size() < M/2) {
-
-                    // if(entry.data.child->is_leaf) {
-                        // Copy their points (objects) into to_be_deleted.
-                        // for( NodeEntry leaf_entry : entry.data.child->entries) {
-                        //     to_be_deleted->push_back(leaf_entry.data.point);
-                        // }
                     RecursiveGetAllData(entry.data.child, to_be_deleted);
-                    // }
                     
                     // KILL
                     entry_to_die = i;
@@ -351,7 +359,11 @@ public:
     void Delete(Point point) {
         vector<Point> to_be_deleted;
         RecursiveDelete(root.data.child, point, &to_be_deleted);
-        root.box = root.data.child->GetMBR();
+        if(root.data.child->entries.size() > 0) {
+            root.box = root.data.child->GetMBR();
+        } else {
+            root.box = MBR{Point{-1,-1}, Point{1,1}};
+        }
         for(Point point : to_be_deleted) {
             Insert(point);
         }
