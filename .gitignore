@@ -3,3 +3,5 @@
 document*
 !*.tex
 *.gch
+output
+tree
