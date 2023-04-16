@@ -42,7 +42,7 @@ struct MBR {
 };
 
 MBR GetMBR(Point point) {
-    float margin = 1.0f;
+    float margin = 0.25f;
     return MBR{Point{point.x-margin,point.y-margin},Point{point.x+margin,point.y+margin}};
 }
 
@@ -96,7 +96,7 @@ struct Node {
     * All leaves appear on the same level.
 */
 class RTree {
-    NodeEntry root;
+    
     int M; // Maximum number of entries per node. An entry is a child node or a point.
     
     // Given a node and a point, returns index of child of node that will change its area the least by engulfing it.
@@ -345,7 +345,8 @@ class RTree {
 
     // returns the height of the tree.
     int RecursiveCheckHealth(Node* node) {
-        assert(node->entries.size() <= M && node->entries.size() >= M/2);
+        if(node != root.data.child)
+            assert(node->entries.size() <= M && node->entries.size() >= M/2);
         if(node->is_leaf == true) {
             return 0;
         }
@@ -362,7 +363,7 @@ class RTree {
     }
 
 public:
-
+    NodeEntry root;
     void Insert(Point point) {
         RecursiveInsert(root.data.child ,point);
         root.box = root.data.child->GetMBR();

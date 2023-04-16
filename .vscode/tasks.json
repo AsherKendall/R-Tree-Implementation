@@ -10,7 +10,9 @@
 				"-g",
 				"${workspaceFolder}/test.cpp",
 				"-o",
-				"${workspaceFolder}/tree"
+				"${workspaceFolder}/tree",
+				"${workspaceFolder}/raylib/lib/libraylib.a",
+				"-I${workspaceFolder}/raylib/include",
 			],
 			"options": {
 				"cwd": "${fileDirname}"
