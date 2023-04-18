@@ -5,7 +5,22 @@
 #include <vector>
 #include <assert.h>
 #include <queue>
+#include <algorithm>
 using namespace std;
+
+// Remove this if you aren't using raylib.
+// #include "raylib.h";
+
+// This is not a raylib color.
+struct NotColor{
+unsigned char r;
+unsigned char g;
+unsigned char b;
+unsigned char a;
+};
+NotColor RandomColor(){
+    return NotColor{(unsigned char)(rand()%256),(unsigned char)(rand()%256),(unsigned char)(rand()%256),255};
+}
 
 /*
         The Coordinate Space
@@ -54,6 +69,7 @@ struct Node;
 
 struct NodeEntry {
     MBR box;
+    NotColor color;
 
     // This entry contains either a child or a point.
     // This is determined by the Node holding it.
@@ -61,6 +77,10 @@ struct NodeEntry {
         Node* child;
         Point point;
     } data;
+
+    NodeEntry() {
+        color = RandomColor();
+    }
 };
 
 struct Node {
@@ -179,6 +199,25 @@ class RTree {
         //                  compensates for the array shift   v
         leaf->entries.erase(leaf->entries.begin() + (indexi<indexy?indexy-1:indexy) );
 
+        // will sort entries so [0] is the the closest to either node1 or node2, and [N] is the farthest from both.
+        if(better_split) {
+            sort(leaf->entries.begin(), leaf->entries.end(),
+                [&node1,&node2](NodeEntry& lhs, NodeEntry& rhs) -> bool{
+                    // Minimum distance (area change) from node 1 to lhs and node2 to lhs.
+                    int lhs_min = min(
+                        (node1.box.If_Engulf(lhs.box).Area() - node1.box.Area()),
+                        (node2.box.If_Engulf(lhs.box).Area() - node2.box.Area())
+                    );
+                    // Minimum distance from node 1 to rhs and node2 and rhs.
+                    int rhs_min = min(
+                        (node1.box.If_Engulf(rhs.box).Area() - node1.box.Area()),
+                        (node2.box.If_Engulf(rhs.box).Area() - node2.box.Area())
+                    );
+                    return lhs_min > rhs_min;
+                }
+            );
+        }
+        
         for (int i = 0; i < leaf->entries.size(); i++)
         {
             if(node1.data.child->entries.size()+(leaf->entries.size()-i) == M/2) {
@@ -241,7 +280,10 @@ class RTree {
         }
         else {
             // Add the point to the child.
-            target_node->data.child->entries.push_back( NodeEntry{ GetMBR(point), {.point = point} } );
+            NodeEntry new_entry = NodeEntry();
+            new_entry.box = GetMBR(point);
+            new_entry.data.point = point;
+            target_node->data.child->entries.push_back( new_entry );
         }
 
         target_node->box = target_node->data.child->GetMBR();
@@ -365,6 +407,7 @@ class RTree {
 
 public:
     NodeEntry root;
+    bool better_split; // sorts elements for linear split
     void Insert(Point point) {
         RecursiveInsert(root.data.child ,point);
         root.box = root.data.child->GetMBR();
@@ -418,6 +461,7 @@ public:
 
     RTree(int M) {
         this->M = M;
+        better_split = true;
         root.data.child = new Node;
         root.box = MBR{Point{-1,-1},Point{1,1}};
         root.data.child->is_leaf = true;

@@ -13,6 +13,7 @@
 				"${workspaceFolder}/tree",
 				"${workspaceFolder}/raylib/lib/libraylib.a",
 				"-I${workspaceFolder}/raylib/include",
+				"-I${workspaceFolder}/raygui/src"
 			],
 			"options": {
 				"cwd": "${fileDirname}"
