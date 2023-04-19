@@ -1,4 +1,4 @@
 # R-Tree-Implementation
 
 
-![image](https://user-images.githubusercontent.com/36317228/233197297-2899d838-4b6e-48d3-8888-8d10fa325a8a.png)
+![image](https://user-images.githubusercontent.com/36317228/233197477-c9dd7a62-ce13-41bd-988e-16b124195e3e.png)
