@@ -87,9 +87,8 @@ int main() {
     // Point{7,6},
     // Point{7,7},
     // Point{7,9},
-
-    vector<Point> queue;
     };
+    
     for(int i =0; i < 25; i++) {
         random_data.push_back(Point{float(margin + rand() % (window_x - margin*2)),float(margin + rand() % (window_y - margin*2))});
     }
