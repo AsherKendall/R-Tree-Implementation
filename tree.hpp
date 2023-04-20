@@ -1,15 +1,10 @@
 //  
-
 #include <iostream>
 #include <list>
 #include <vector>
 #include <assert.h>
-#include <queue>
 #include <algorithm>
 using namespace std;
-
-// Remove this if you aren't using raylib.
-// #include "raylib.h";
 
 // This is not a raylib color.
 struct NotColor{
@@ -62,11 +57,7 @@ MBR GetMBR(Point point) {
     return MBR{Point{point.x-margin,point.y-margin},Point{point.x+margin,point.y+margin}};
 }
 
-
-
 struct Node;
-
-
 struct NodeEntry {
     MBR box;
     NotColor color;
@@ -444,13 +435,6 @@ public:
         }
     }
 
-    void ClosestNeighbor(Node* node,float dist) {
-        queue<Node> priorqeue();
-    }
-
-    // vector<Point> InRadius(Point point , float radius) {
-
-    // }
     void PrintTree() {
         RecursivePrintTree(root.data.child);
     }
