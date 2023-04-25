@@ -87,7 +87,6 @@ int main() {
     cout << "Vector Search Time" << t2-t1;
 
 
-    tree.FindLeaf(temp,tree);
 
 
 

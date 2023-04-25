@@ -8,6 +8,15 @@
 \section{Abstract}
 An R Tree is a data structure used to make spacial computation and comparison much faster than brute force.  ...
 
+\section{Use Cases}
+The R-tree is very similar to the B-tree in structure, and Quad-Tree in use. One of the main differences is that
+R-trees are pageable. This means that they could be put into storage, which could be ideal for very large data sets
+that can't be stored in ram. You can also take out parts of the R-tree into ram while working with it. A good example
+of a program that could use R-trees is a mapping system of the world, where the large data set would be hard to store in memory.
+The R-tree is also very good for nearest neighbor searching. Also R-tree can be used to store any type of shape which allow for shapes
+of things such as buildings to be put in the minimum bouding rectangle. R-trees have also been used a lot in databases for spacial data.
+
+
 \section{Inserting}
 Complexity
 average : none
