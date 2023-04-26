@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage{tikz}
+\usetikzlibrary{shapes}
+
 \author{Asher Griess, David Medin}
 \title{R Tree Algorithm}
 \begin{document}
@@ -10,8 +12,8 @@ An R Tree is a data structure used to make spacial computation and comparison mu
 
 \section{Use Cases}
 The R-tree is very similar to the B-tree in structure, and Quad-Tree in use. One of the main differences is that
-R-trees are page-able. This means that they could be put into storage, which could be ideal for very large data sets
-that can't be stored in ram. You can also take out parts of the R-tree into ram while working with it. A good example
+R-trees are page-able. This means that they could be put into storage, which could be ideal for very large data sets 
+that can't be stored in ram. \cite{guttman_1984_rtrees} You can also take out parts of the R-tree into ram while working with it. A good example
 of a program that could use R-trees is a mapping system of the world, where the large data set would be hard to store in memory.
 The R-tree is also very good for nearest neighbor searching. Also R-tree can be used to store any type of shape which allow for shapes
 of things such as buildings to be put in the minimum bounding rectangle. R-trees have also been used a lot in databases for spacial data.
@@ -29,7 +31,9 @@ that will have least increase to the minimum bounding rectangle that it is inser
 It should also be noted that when we are at M entries at the inserted leaf node, we
 need to split.
 
-\usetikzlibrary{shapes}
+\begin{figure}
+\caption{Asher Griess, add something here you big dummy!}
+\centering
 \begin{tikzpicture}
     \tikzstyle{rtree}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw]
     \tikzstyle{every node}=[rtree]
@@ -48,12 +52,13 @@ need to split.
   };
     
 \end{tikzpicture}
-
+\end{figure}
 
 
 Note: In this example the leaf nodes contain the actual points or shapes.
 \subsection*{Psuedo Code}
 \begin{flushleft}
+
     
 If at leaf:
 
@@ -128,40 +133,36 @@ Worst Case : $O(n)$
 When removing a point - or an object - from a R Tree, the first step is to find the leaf node that stores the point.
 However, we have already covered that in the previous section, Searching. Now that we have the leaf node that contains
 the point, we now remove the point from the leaf node. This may reduce the number of entries this leaf node has to be below
-$M/2$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
+$m$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
 we can't have a smaller tree.\\
 \begin{figure}
 \caption{Removing an entry from the red entry}
 \centering
+\label{fig:removing}
 \begin{tikzpicture}
     \node{rest of the tree}
-    child {node{parent}[sibling distance=40mm]
-      child{node[color=red]{leaf(2 entries)} }
-      child{node{other leaf(3 entries)}}
+    child {node{$N_1$}[sibling distance=40mm]
+      child{node[color=red]{$N_2$(2 entries)} }
+      child{node{$N_3$(3 entries)}}
     };
     \draw (3cm,0) node{$M=3$};
     \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
 \end{tikzpicture}
 \end{figure}
 \paragraph{}
-In Figure 1, we see that the leaf with $2$ entries is going to have an entry removed. Because $m=3$, the red leaf node will be deleted
-and its other entry will be reinserted later.
-After that, because $parent$ has only $1$ entry, it will be deleted, and we'll recurse through its children and find the $3$ entries
-is $other leaf$ and store those for reinsertion as well.
-$1 < M/2$, 
+In Figure \ref{fig:removing}, we see that the leaf with $2$ entries is going to have an entry removed. Because $m=3$, the red leaf node will be deleted and its other entry will be reinserted later.After that, because $N_1$ has only $1$ entry, it will be deleted, and we'll recurse through its children and find the $3$ entries is $N_3$ and store those for reinsertion as well.
 \paragraph{}
-If this node is not the root and has less than $M/2$ entries, then it is necessary to delete that node. But we don't want to destroy
-the other $M/2 - 1$ nodes, so we'll store each of the node's entries into a list, or other container type, to insert back into
+If this node is not the root and has less than $m$ entries, then it is necessary to delete that node. But we don't want to destroy
+the other $m - 1$ entries, so we'll store each of the node's entries into a list, or other container type, to insert back into
 the tree when we are done removing. Because we are removing the leaf node, this means that its parent's entries can also fall below
-$M/2$ nodes, which then requires that it is deleted too. In that case, a recursive search of all of that parent's children is necessary
+$m$ nodes, which then requires that it is deleted too. In that case, a recursive search of all of that parent's children is necessary
 to find all points - or other data objects - to store for reinsertion later.
 \paragraph{}
 Even though it seems that a the leaf node case and the parent node case seem different, they are actually the same case. Parents have
-other nodes as their entries and leaf nodes have objects as their entries. Both must have $M/2 \le n \le M$ entries (where $n$ is the number
+other nodes as their entries and leaf nodes have objects as their entries. Both must have $m \le n \le M$ entries (where $n$ is the number
 of entries the node has), and both need to be deleted from their parent and recursively store all of the entries below it in the tree.
-
-\section{Citation}
-
+\bibliographystyle{plain}
+\bibliography{rtree.bib}
 % text \textbf{bold text} text. Some math: $2+2=5$
 
 % \begin{tikzpicture}[main/.style = {draw, circle}]
