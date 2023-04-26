@@ -100,6 +100,11 @@ However, we have already covered that in the previous section, Searching. Now th
 the point, we now remove the point from the leaf node. This may reduce the number of entries this leaf node has to be below
 $M/2$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
 we can't have a smaller tree.
+\begin{tikzpicture}
+    \node{rest of the tree}
+        child {node{parent} child{node{leaf} } child{node{other leaf}} };
+\end{tikzpicture}
+
 \paragraph{}
 If this node is not the root and has less than $M/2$ entries, then it is necessary to delete that node. But we don't want to destroy
 the other $M/2 - 1$ nodes, so we'll store each of the node's entries into a list, or other container type, to insert back into
