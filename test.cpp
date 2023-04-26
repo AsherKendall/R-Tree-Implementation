@@ -3,7 +3,7 @@
 #include <time.h>
 
 #include "tree.hpp"
-#include "raylib/include/raylib.h"
+#include "raylib/src/raylib.h"
 #define RAYGUI_IMPLEMENTATION
 #include "raygui/src/raygui.h"
 
