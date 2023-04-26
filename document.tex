@@ -97,6 +97,7 @@ For(each child):
 \section{Splitting} 
 \begin{lstlisting}
 # Find Two Points with most extreme distances
+BiggestDiff = 0;
 For(child i for each child):
   For(child z for each Child):
     BiggestXDiff = max(
@@ -107,6 +108,25 @@ For(child i for each child):
       i.box.bottomleft.y-z.box.topleft.y,
       i.box.topleft.y-z.box.bottomleft.y
     );
+    if(BiggestXDiff > BiggestDiff)
+    {
+        BiggestDiff = BiggestXDiff
+    }
+    if(BiggestYDiff > BiggestDiff)
+    {
+        BiggestDiff = BiggestYDiff
+    }
+#Make two nodes with the found extreme boxes
+Node newnode1 = new Node()
+Node newnode2 = new Node()
+
+#Remove from children
+Parent.Remove(box1)
+Parent.Remove(box2)
+
+#Take children from old nodes and put them in new ones
+
+
 \end{lstlisting}
 
 \section{Searching}
