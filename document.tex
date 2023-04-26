@@ -29,11 +29,25 @@ Average : $O(log_Mn)$
 Worst Case : $O(n)$
 
 \section{Removing}
+\paragraph{}
+When removing a point - or an object - from a R Tree, the first step is to find the leaf node that stores the point.
+However, we have already covered that in the previous section, Searching. Now that we have the leaf node that contains
+the point, we now remove the point from the leaf node. This may reduce the number of entries this leaf node has to be below
+$M/2$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
+we can't have a smaller tree.
+\paragraph{}
+If this node is not the root and has less than $M/2$ entries, then it is necessary to delete that node. But we don't want to destroy
+the other $M/2 - 1$ nodes, so we'll store each of the node's entries into a list, or other container type, to insert back into
+the tree when we are done removing. Because we are removing the leaf node, this means that its parent's entries can also fall below
+$M/2$ nodes, which then requires that it is deleted too. In that case, a recursive search of all of that parent's children is necessary
+to find all points - or other data objects - to store for reinsertion later.
+\paragraph{}
+Even though it seems that a the leaf node case and the parent node case seem different, they are actually the same case. Parents have
+other nodes as their entries and leaf nodes have objects as their entries. Both must have $M/2 \le n \le M$ entries (where $n$ is the number
+of entries the node has), and both need to be deleted from their parent and recursively store all of the entries below it in the tree.
 
 \section{Citation}
 
-% \subsection*{Part One point one}
-% uhhhuhhu huhu.
 % text \textbf{bold text} text. Some math: $2+2=5$
 
 % \begin{tikzpicture}[main/.style = {draw, circle}]
