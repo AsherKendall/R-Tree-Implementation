@@ -1,4 +1,4 @@
-//  
+//  http://www-db.deis.unibo.it/courses/SI-LS/papers/Gut84.pdf
 #include <iostream>
 #include <list>
 #include <vector>

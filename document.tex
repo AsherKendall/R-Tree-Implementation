@@ -48,7 +48,10 @@ need to split.
 \end{tikzpicture}
 
 
-Note: In this example the leaf nodes are the actual points/shapes.
+In this figure we would be adding the node G as a child of G
+if C's minimum boudning box increases the least.
+
+Note: In this example the leaf nodes are the actual points, you would normaly store these in a array.
 \subsection*{Psuedo Code}
 \begin{flushleft}
     
@@ -96,7 +99,26 @@ When removing a point - or an object - from a R Tree, the first step is to find 
 However, we have already covered that in the previous section, Searching. Now that we have the leaf node that contains
 the point, we now remove the point from the leaf node. This may reduce the number of entries this leaf node has to be below
 $M/2$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
-we can't have a smaller tree.
+we can't have a smaller tree.\\
+\begin{figure}
+\caption{Removing an entry from the red entry}
+\centering
+\begin{tikzpicture}
+    \node{rest of the tree}
+    child {node{parent}[sibling distance=40mm]
+      child{node[color=red]{leaf(2 entries)} }
+      child{node{other leaf(3 entries)}}
+    };
+    \draw (3cm,0) node{$M=3$};
+    \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
+\end{tikzpicture}
+\end{figure}
+\paragraph{}
+In Figure 1, we see that the leaf with $2$ entries is going to have an entry removed. Because $m=3$, the red leaf node will be deleted
+and its other entry will be reinserted later.
+After that, because $parent$ has only $1$ entry, it will be deleted, and we'll recurse through its children and find the $3$ entries
+is $other leaf$ and store those for reinsertion as well.
+$1 < M/2$, 
 \paragraph{}
 If this node is not the root and has less than $M/2$ entries, then it is necessary to delete that node. But we don't want to destroy
 the other $M/2 - 1$ nodes, so we'll store each of the node's entries into a list, or other container type, to insert back into
