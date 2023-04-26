@@ -36,22 +36,19 @@ need to split.
     \tikzstyle{level 1}=[sibling distance=45mm]
     \tikzstyle{level 2}=[sibling distance=20mm]
     \node {$N_1$} [->]
-    child {node {$N_2$ \nodepart{two} $N_3$}
-    child {node {$N_6$ \nodepart{two} $N_7$}}
-    child {node {$N_8$ \nodepart{two} $N_9$}}    
+        child {node {$N_2$ \nodepart{two} $N_3$}
+        child {node {$N_6$ \nodepart{two} $N_7$}}
+        child {node {$N_8$ \nodepart{two} $N_9$}}    
   } 
-  child {node {$N_4$ \nodepart{two} $N_5$}
+    child {node {$N_4$ \nodepart{two} $N_5$}
         child {node {$N_{10}$ \nodepart{two} $N_{11}$}}
-    child {node {$N_{12}$ \nodepart{two} $N_{13}$}} 
+        child {node {$N_{12}$ \nodepart{two} $N_{13}$}} 
   };
     
 \end{tikzpicture}
 
 
-In this figure we would be adding the node G as a child of G
-if C's minimum boudning box increases the least.
-
-Note: In this example the leaf nodes are the actual points, you would normaly store these in a array.
+Note: In this example the leaf nodes are the actual points/shapes.
 \subsection*{Psuedo Code}
 \begin{flushleft}
     
