@@ -35,23 +35,23 @@ need to split.
     \tikzstyle{every node}=[bplus]
     \tikzstyle{level 1}=[sibling distance=45mm]
     \tikzstyle{level 2}=[sibling distance=20mm]
-    \node {$N_1$} [->]
-        child {node {$N_2$ \nodepart{two} $N_3$}
-        child {node {$N_6$ \nodepart{two} $N_7$}}
-        child {node {$N_8$ \nodepart{two} $N_9$}}    
+    \draw (3cm,0.25cm) node{$M = 4$};
+    \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
+    \node {$N_1$ \nodepart{two} $N_2$} [->]
+        child {node {$N_3$ \nodepart{two} $N_4$}
+        child {node {$N_7$ \nodepart{two} $N_8$}}
+        child {node {$N_9$ \nodepart{two} $N_{10}$}}    
   } 
-    child {node {$N_4$ \nodepart{two} $N_5$}
-        child {node {$N_{10}$ \nodepart{two} $N_{11}$}}
-        child {node {$N_{12}$ \nodepart{two} $N_{13}$}} 
+    child {node {$N_5$ \nodepart{two} $N_6$}
+        child {node {$N_{11}$ \nodepart{two} $N_{12}$}}
+        child {node {$N_{13}$ \nodepart{two} $N_{14}$}} 
   };
     
 \end{tikzpicture}
 
 
-In this figure we would be adding the node G as a child of G
-if C's minimum boudning box increases the least.
 
-Note: In this example the leaf nodes are the actual points, you would normaly store these in a array.
+Note: In this example the leaf nodes contain the actual points or shapes.
 \subsection*{Psuedo Code}
 \begin{flushleft}
     
