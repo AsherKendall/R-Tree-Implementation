@@ -3,7 +3,7 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \lstset { %
-    language=C++,
+    language=Python,
     backgroundcolor=\color{black!5}, % set backgroundcolor
     basicstyle=\footnotesize,% basic font setting
 }
@@ -28,12 +28,12 @@ of things such as buildings to be put in the minimum bounding rectangle. R-trees
 \paragraph{}
 A R Tree is parameterized by one variable, $M$, which specifies the maximum number of entries each node is allowed to have. Based on $M$, is $m = \lceil\frac{M}{2}\rceil$, the minimum number of entries each node must have. A reasonable value for $M$ is 50. \cite{guttman_1984_rtrees}
 
-\begin{lstlisting}
-  for (int i=0; i<iterations;i++)
-  {
-  do something
-  }
-  \end{lstlisting}
+% \begin{lstlisting}
+%   for (int i=0; i<iterations;i++)
+%   {
+%   do something
+%   }
+%   \end{lstlisting}
   
 
 \section{Inserting}
@@ -48,7 +48,7 @@ that will have least increase to the minimum bounding rectangle that it is inser
 It should also be noted that when we are at $M$ entries at the inserted leaf node, we
 need to split.
 
-\begin{figure}
+\begin{figure}[h]
 \caption{R-Tree Example}
 \centering
 \begin{tikzpicture}
@@ -76,71 +76,38 @@ Note: In this example the leaf nodes contain the actual points or shapes($P_n$).
 
 
 \subsection*{Pseudo Code}
-\begin{flushleft}
 
-    
+\begin{lstlisting}    
 If at leaf:
-
-\quad Insert Entry
-
-\quad If(entries $>$ M):
-
-\quad \quad Split();
-
-\quad CurrentNode.entries.Add(Entry);
-
-\quad return;
-
-
+  Insert(Entry)
+  If(entries > M):
+    Split()
+  CurrentNode.entries.Add(Entry)
+  return
 For(each child):
+  If(ChildNode.IsEngulf(Entry)):
+    Insert(Node)
+  else:
+    For(each child):
+      Find difference in area if Entry were inserted
+    insert(NodeWithSmallestDifference);
+\end{lstlisting}
 
-
-\quad If(ChildNode.IsEngulf(Entry)):
-
- \quad \quad Insert(Node);
-
-
-else:
-
-\quad For(each child):
-
-    \quad \quad
-    Find difference in area if Entry were inserted
-
-    \quad insert(NodeWithSmallestDifference);
-\end{flushleft}
 
 \section{Splitting} 
-\begin{flushleft}s
-//Find Two Points with most extreme distances
-
+\begin{lstlisting}
+# Find Two Points with most extreme distances
 For(child i for each child):
-
-\quad For(child z for each Child):
-
-    \quad \quad BiggestXDiff = max(
-
-    \quad \quad \quad     i.box.bottomleft.x-z.box.topleft.x,
-
-    \quad \quad \quad     i.box.topleft.x-z.box.bottomleft.x
-
-    \quad \quad     );
-
-    \quad \quad BiggestYDiff = max(
-
-    \quad \quad \quad     i.box.bottomleft.y-z.box.topleft.y,
-
-    \quad \quad \quad     i.box.topleft.y-z.box.bottomleft.y
-
-    \quad \quad     );
-
-    \quad\quad 
-
-\subsection*{Linear Split Pseudo Code}
-
-
-
-\end{flushleft}
+  For(child z for each Child):
+    BiggestXDiff = max(
+      i.box.bottomleft.x-z.box.topleft.x,
+      i.box.topleft.x-z.box.bottomleft.x
+    );
+    BiggestYDiff = max(
+      i.box.bottomleft.y-z.box.topleft.y,
+      i.box.topleft.y-z.box.bottomleft.y
+    );
+\end{lstlisting}
 
 \section{Searching}
 Complexity
@@ -154,7 +121,7 @@ However, we have already covered that in the previous section, Searching. Now th
 the point, we now remove the point from the leaf node. This may reduce the number of entries this leaf node has to be below
 $m$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
 we can't have a smaller tree.\\
-\begin{figure}
+\begin{figure}[h]
 \caption{Removing an entry from the red entry}
 \centering
 \label{fig:removing}
