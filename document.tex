@@ -13,7 +13,7 @@ An R Tree is a data structure used to make spacial computation and comparison mu
 \section{Use Cases}
 The R-tree is very similar to the B-tree in structure, and Quad-Tree in use. One of the main differences is that
 R-trees are page-able. This means that they could be put into storage, which could be ideal for very large data sets 
-that can't be stored in ram. You can also take out parts of the R-tree into ram while working with it. A good example
+that can't be stored in ram. \cite{guttman_1984_rtrees} You can also take out parts of the R-tree into ram while working with it. A good example
 of a program that could use R-trees is a mapping system of the world, where the large data set would be hard to store in memory.
 The R-tree is also very good for nearest neighbor searching. Also R-tree can be used to store any type of shape which allow for shapes
 of things such as buildings to be put in the minimum bounding rectangle. R-trees have also been used a lot in databases for spacial data.
@@ -131,7 +131,6 @@ to find all points - or other data objects - to store for reinsertion later.
 Even though it seems that a the leaf node case and the parent node case seem different, they are actually the same case. Parents have
 other nodes as their entries and leaf nodes have objects as their entries. Both must have $m \le n \le M$ entries (where $n$ is the number
 of entries the node has), and both need to be deleted from their parent and recursively store all of the entries below it in the tree.
-\section{Citation}
 \bibliographystyle{plain}
 \bibliography{rtree.bib}
 % text \textbf{bold text} text. Some math: $2+2=5$
