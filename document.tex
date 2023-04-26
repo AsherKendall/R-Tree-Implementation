@@ -31,8 +31,8 @@ need to split.
 
 \usetikzlibrary{shapes}
 \begin{tikzpicture}
-    \tikzstyle{bplus}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw]
-    \tikzstyle{every node}=[bplus]
+    \tikzstyle{rtree}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw]
+    \tikzstyle{every node}=[rtree]
     \tikzstyle{level 1}=[sibling distance=45mm]
     \tikzstyle{level 2}=[sibling distance=20mm]
     \draw (3cm,0.25cm) node{$M = 4$};
@@ -87,6 +87,36 @@ else:
 \end{flushleft}
 
 \section{Splitting} 
+\begin{flushleft}s
+//Find Two Points with most extreme distances
+
+For(child i for each child):
+
+\quad For(child z for each Child):
+
+    \quad \quad BiggestXDiff = max(
+
+    \quad \quad \quad     i.box.bottomleft.x-z.box.topleft.x,
+
+    \quad \quad \quad     i.box.topleft.x-z.box.bottomleft.x
+
+    \quad \quad     );
+
+    \quad \quad BiggestYDiff = max(
+
+    \quad \quad \quad     i.box.bottomleft.y-z.box.topleft.y,
+
+    \quad \quad \quad     i.box.topleft.y-z.box.bottomleft.y
+
+    \quad \quad     );
+
+    \quad\quad 
+
+\subsection*{Linear Split Pseudo Code}
+
+
+
+\end{flushleft}
 
 \section{Searching}
 Complexity
