@@ -49,7 +49,7 @@ It should also be noted that when we are at $M$ entries at the inserted leaf nod
 need to split.
 
 \begin{figure}
-\caption{Asher Griess, add something here you big dummy!}
+\caption{R-Tree Example}
 \centering
 \begin{tikzpicture}
     \tikzstyle{rtree}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw]
@@ -60,19 +60,21 @@ need to split.
     \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
     \node {$N_1$ \nodepart{two} $N_2$} [->]
         child {node {$N_3$ \nodepart{two} $N_4$}
-        child {node {$N_7$ \nodepart{two} $N_8$}}
-        child {node {$N_9$ \nodepart{two} $N_{10}$}}    
+        child {node {$P_1$ \nodepart{two} $P_2$}}
+        child {node {$P_3$ \nodepart{two} $P_4$}}    
   } 
     child {node {$N_5$ \nodepart{two} $N_6$}
-        child {node {$N_{11}$ \nodepart{two} $N_{12}$}}
-        child {node {$N_{13}$ \nodepart{two} $N_{14}$}} 
+        child {node {$P_5$ \nodepart{two} $P_6$}}
+        child {node {$P_7$ \nodepart{two} $P_8$}} 
   };
     
 \end{tikzpicture}
+
+Note: In this example the leaf nodes contain the actual points or shapes($P_n$).
 \end{figure}
 
 
-Note: In this example the leaf nodes contain the actual points or shapes.
+
 \subsection*{Pseudo Code}
 \begin{flushleft}
 
