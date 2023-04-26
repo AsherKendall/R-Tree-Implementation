@@ -19,9 +19,33 @@ of things such as buildings to be put in the minimum bouding rectangle. R-trees 
 
 \section{Inserting}
 Complexity
+
 average : none
+
 worst case : $O(n)$
-\section{Splitting}
+
+When splitting we are trying to find the best leaf node
+that will have least increase to the minimum bounding rectangle.
+It should also be noted that when we are at M leafs at every node we are going
+to need to perform a split where M is the max children per node.
+
+\begin{tikzpicture}
+\begin{scope}[every node/.style={circle,thick,draw}]
+    \node (A) at (2.5,4) {A};
+    \node (B) at (1,2.5) {B};
+    \node (C) at (4,2.5) {C};
+    \node (D) at (0,1) {D};
+    \node (E) at (2,1) {E};
+    \node (F) at (3,1) {F} ;
+    
+\end{scope}
+
+begin{scope}[>={Stealth[black]},
+              every edge/.style={draw=black,very thick}]
+              \path [->] (A) edge (B);
+              \path [->] (A) edge (B);
+\end{tikzpicture}
+\section{Splitting} 
 
 \section{Searching}
 Complexity
