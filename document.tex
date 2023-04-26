@@ -8,15 +8,16 @@
 \maketitle
 
 \section{Abstract}
-An R Tree is a data structure used to make spacial computation and comparison much faster than brute force.  ...
-
-\section{Use Cases}
+\paragraph{}
+A R Tree is a data structure used to make spacial computation and comparison much faster than brute force.
 The R-tree is very similar to the B-tree in structure, and Quad-Tree in use. One of the main differences is that
 R-trees are page-able. This means that they could be put into storage, which could be ideal for very large data sets 
-that can't be stored in ram. \cite{guttman_1984_rtrees} You can also take out parts of the R-tree into ram while working with it. A good example
+that can't be stored in ram.  You can also take out parts of the R-tree into ram while working with it. A good example
 of a program that could use R-trees is a mapping system of the world, where the large data set would be hard to store in memory.
 The R-tree is also very good for nearest neighbor searching. Also R-tree can be used to store any type of shape which allow for shapes
 of things such as buildings to be put in the minimum bounding rectangle. R-trees have also been used a lot in databases for spacial data.
+\paragraph{}
+A R Tree is parameterized by one variable, $M$, which specifies the maximum number of entries each node is allowed to have. Based on $M$, is $m = \lceil\frac{M}{2}\rceil$, the minimum number of entries each node must have. A reasonable value for $M$ is 50. \cite{guttman_1984_rtrees}
 
 
 \section{Inserting}
@@ -28,7 +29,7 @@ worst case : $O(n)$
 
 When splitting we are trying to find the best leaf node
 that will have least increase to the minimum bounding rectangle that it is inserted in.
-It should also be noted that when we are at M entries at the inserted leaf node, we
+It should also be noted that when we are at $M$ entries at the inserted leaf node, we
 need to split.
 
 \begin{figure}
@@ -56,7 +57,7 @@ need to split.
 
 
 Note: In this example the leaf nodes contain the actual points or shapes.
-\subsection*{Psuedo Code}
+\subsection*{Pseudo Code}
 \begin{flushleft}
 
     
