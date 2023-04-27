@@ -51,14 +51,15 @@ which are all parents, then the entry of the first node will have an MBR encompa
 Similarly, entries that point to leaf nodes have an MBR encompassing all of the data objects - or points - that belong to that leaf node.
 
 \section{Inserting}
-Complexity
-
-average : none
-
-worst case : $O(n)$
-
 \paragraph{}
-
+We've defined what the tree is, but now we need to add data. There isn't an average complexity, but its worst
+case is $O(n)$. If root is a leaf node, then add it to root without question. If this causes any node to have
+ more than $M$ entries, then splitting it is necessary
+which is covered in a later section. If the node has children, then determine find any node that can totally
+fit the object, or the node who's MBR's area will change the least if it were added to the node. Continue this
+processes down the tree until you reach a leaf node that either already can contain the object or will not change
+its area very much. Lastly, insert. If the number of entries of the leaf node exceeds $M$, then splitting the
+node is necessary.
 
 \begin{minipage}{\linewidth}
 \captionof{figure}{R-Tree Example}
@@ -85,6 +86,8 @@ Note: In this example the leaf nodes contain the actual points or shapes($P_n$).
 \end{minipage}
 
 \subsection*{Pseudo Code}
+This process is shown as pseudo code below
+
 
 \begin{lstlisting}    
 If at leaf:
@@ -159,16 +162,14 @@ Parent.Remove(box2)
 
 #Take children from old node and put them in new ones
 \end{lstlisting}
-
 \section{Searching}
-
 \paragraph{}
 The next operation to do on an R Tree is a search for an object. Given an object, the R Tree will search itself for
 an object that is equal to the object and return the node that contains it. Searching an R Tree has an average complexity
 of $O(log_Mn)$, and a worst case of $O(n)$, making it better, on average, as you increase $M$, the maximum number of entries
 per node.
-
-\paragraph{}The first obvious thing to check is whether the root
+\paragraph{}
+The first obvious thing to check is whether the root
 node's MBR contains the object. If it doesn't, then there is no way it is contained by any of its children and we can stop here.
 If it is contained, then we check each of its children and do the same thing, checking for whether the object is totally contained.
 For each child that does contain the object, we'll recurse down and start the process over again until we reach a leaf node that
