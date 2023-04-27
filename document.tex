@@ -5,6 +5,7 @@
 \usepackage{xcolor}
 \usepackage{multicol}
 \usepackage{geometry}
+\usepackage{hyperref}
 \lstset { %
     language=Python,
     backgroundcolor=\color{black!5}, % set backgroundcolor
@@ -20,27 +21,34 @@
 \title{R Tree Algorithm}
 \begin{document}
 \maketitle
-
+\begin{center}
+Github URL : \url{https://github.com/asherkendall/r-tree-implementation}
+\end{center}
 
 \begin{multicols}{2}[]
 \section{Abstract}
 \paragraph{}
 A R Tree is a data structure used to make spacial computation and comparison much faster than brute force.
-The R-tree is very similar to the B-tree in structure, and Quad-Tree in use. One of the main differences is that
-R-trees are page-able. This means that they could be put into storage, which could be ideal for very large data sets 
-that can't be stored in ram.  You can also take out parts of the R-tree into ram while working with it. A good example
+The R tree is very similar to the B-tree in structure, and Quad-Tree in use. One of the main differences is that
+R trees are page-able. This means that they could be put into storage, which could be ideal for very large data sets 
+that can't be stored in ram.  You can also take out parts of the R tree into ram while working with it. Not only is it page-able,
+ but it also works for any dimension, not only one dimension like B Trees, but up to $N$ dimension. A good example
 of a program that could use R-trees is a mapping system of the world, where the large data set would be hard to store in memory.
-The R-tree is also very good for nearest neighbor searching. Also R-tree can be used to store any type of shape which allow for shapes
-of things such as buildings to be put in the minimum bounding rectangle. R-trees have also been used a lot in databases for spacial data.
+The R tree is also very good for nearest neighbor searching. Also R tree can be used to store any type of shape which allow for shapes
+of things such as buildings to be put in the minimum bounding rectangle. R trees have also been used a lot in databases for spacial data.
 
 \section{Basics}
 
 \paragraph{}
-A R Tree is parameterized by one variable, $M$, which specifies the maximum number of entries each node is allowed to have. An entry of a node is either a reference
-to another node, or a data object. In our implementation, all data objects are points in space.
-Based on $M$, is $m = \lceil\frac{M}{2}\rceil$, the minimum number of entries each node must have. A reasonable value for $M$ is 50. \cite{guttman_1984_rtrees} Each entry of a node must have an Minimum Bounding Rectangle,
-or MBR (which is also an AABB). This is a rectangle that tightly encloses all of its contents. If an entry to a node is another node which are all parents, then the entry
-of the first node will have an MBR encompassing all of its child nodes. Similarly, entries that point to leaf nodes have an MBR encompassing all of the data objects - or points - that belong to that leaf node.
+A R Tree is parameterized by two variables, $M$, which specifies the maximum number of entries each node is allowed to have, and
+ the number of dimensions of the space the R Tree is mapping. An entry of a node is either a reference
+to another node, or a data object. In our implementation, all data objects are points in space, but you can use any combination
+ of shapes in your R Tree as long as you can test equality and get its minimum bounding rectangle.
+Based on $M$, is $m = \lceil\frac{M}{2}\rceil$, the minimum number of entries each node must have. A reasonable value for $M$ is 50.
+ \cite{guttman_1984_rtrees} Each entry of a node must have an Minimum Bounding Rectangle,
+or MBR (which is also an AABB). This is a rectangle that tightly encloses all of its contents. If an entry to a node is another node
+which are all parents, then the entry of the first node will have an MBR encompassing all of its child nodes.
+Similarly, entries that point to leaf nodes have an MBR encompassing all of the data objects - or points - that belong to that leaf node.
 
 \section{Inserting}
 Complexity
@@ -49,10 +57,8 @@ average : none
 
 worst case : $O(n)$
 
-When splitting we are trying to find the best leaf node
-that will have least increase to the minimum bounding rectangle that it is inserted in.
-It should also be noted that when we are at $M$ entries at the inserted leaf node, we
-need to split.
+\paragraph{}
+
 
 \begin{minipage}{\linewidth}
 \captionof{figure}{R-Tree Example}
@@ -98,6 +104,30 @@ For(each child):
 
 
 \section{Splitting} 
+
+\paragraph{}
+When splitting our goal is to take a node that has too many entries and split it into
+two nodes that contain at least $m$ entries and reduce the total area of the two nodes'
+MBR's as much as possible. We implemented the Linear Split in code, but there are other
+algorithms such as quadratic split and exhaustive split, the later of which checks every
+possible split and chooses the option with the least area. The Linear Split algorithm
+is linear in $M$ and the number of dimensions of the space. It often does sub-optimal
+splits, but it is much better than the exhaustive complexity of $O(d^{M-1})$, where
+$d$ is the number of dimensions.
+
+\paragraph{}
+The first step in the linear split algorithm is to find the two entries that will be the
+start of the two new nodes produced from this split. The two starting entries will be the
+entries with the greatest difference in a dimension. So, compare the $x$'s, then the $y$'s,
+and such for however many dimensions you have. One of those starting entries goes to node one,
+the other to node two. Then, for all other entries test which of the two nodes' MBR's area
+will change the least if it expands to encompass the entry, and add that entry to that node. Do this
+until either all entries are split between the two nodes or one of the nodes must claim the
+rest of the entries in order to have at least $m$ entries. Lastly, set the parent of the two
+new nodes to the parent of the old node, and delete the old node.
+
+This process is shown in pseudo code below.
+
 \begin{lstlisting}
 # Find Two Points with most extreme distances
 BiggestDiff = 0;
@@ -154,8 +184,8 @@ the point, we now remove the point from the leaf node. This may reduce the numbe
 $m$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
 we can't have a smaller tree.\\
 
-\begin{minipage}{\columnwidth}
-\captionof{figure}{A snapshot of the bottom of an R Tree. $N_{parent}$ represents the rest of the tree, and $P_n$ represents the data objects.}
+\begin{minipage}{\linewidth}
+\captionof{figure}{A snapshot of the bottom of an R Tree. $N_{parent}$\\ represents the rest of the tree, and $P_n$ represents the data\\ objects.}
 \centering
 \begin{tikzpicture}
   \draw (3cm,0) node{$M=3$};
@@ -174,7 +204,9 @@ we can't have a smaller tree.\\
 \end{minipage}
 
 \paragraph{}
-In Figure \ref{fig:removing}, we see that the leaf node $N_1$, which has two entries, is going to have an entry removed. Because $m=3$, the red leaf node will be deleted and its other entry will be reinserted later.After that, because $N_{parent}$ has only one entry, it will be deleted, and we'll recurse through its children and find the three entries is $N_2$ and store those for reinsertion as well.
+In Figure \ref{fig:removing}, we see that the leaf node $N_1$, which has two entries, is going to have an entry removed.
+ Because $m=3$, the red leaf node will be deleted and its other entry will be reinserted later.After that, because $N_{parent}$
+ has only one entry, it will be deleted, and we'll recurse through its children and find the three entries is $N_2$ and store those for reinsertion as well.
 \paragraph{}
 If this node is not the root and has less than $m$ entries, then it is necessary to delete that node. But we don't want to destroy
 the other $m - 1$ entries, so we'll store each of the node's entries into a list, or other container type, to insert back into
