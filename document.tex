@@ -51,21 +51,21 @@ need to split.
 \captionof{figure}{R-Tree Example}
 \centering
 \begin{tikzpicture}
-    \tikzstyle{rtree}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw]
-    \tikzstyle{every node}=[rtree]
-    \tikzstyle{level 1}=[sibling distance=45mm]
-    \tikzstyle{level 2}=[sibling distance=20mm]
-    \draw (3cm,0.25cm) node{$M = 4$};
-    \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
-    \node {$N_1$ \nodepart{two} $N_2$} [->]
-        child {node {$N_3$ \nodepart{two} $N_4$}
-        child {node {$P_1$ \nodepart{two} $P_2$}}
-        child {node {$P_3$ \nodepart{two} $P_4$}}    
+  \draw (3cm,0.25cm) node{$M = 4$};
+  \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
+  \tikzstyle{rtree}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw]
+  \tikzstyle{every node}=[rtree]
+  \tikzstyle{level 1}=[sibling distance=45mm]
+  \tikzstyle{level 2}=[sibling distance=20mm]
+  \node {$N_1$ \nodepart{two} $N_2$} [->]
+      child {node {$N_3$ \nodepart{two} $N_4$}
+      child {node {$P_1$ \nodepart{two} $P_2$}}
+      child {node {$P_3$ \nodepart{two} $P_4$}}    
   } 
-    child {node {$N_5$ \nodepart{two} $N_6$}
-        child {node {$P_5$ \nodepart{two} $P_6$}}
-        child {node {$P_7$ \nodepart{two} $P_8$}} 
-  };
+  child {node {$N_5$ \nodepart{two} $N_6$}
+      child {node {$P_5$ \nodepart{two} $P_6$}}
+      child {node {$P_7$ \nodepart{two} $P_8$}} 
+};
 \end{tikzpicture}
 
 Note: In this example the leaf nodes contain the actual points or shapes($P_n$).
@@ -137,23 +137,27 @@ the point, we now remove the point from the leaf node. This may reduce the numbe
 $m$, which is not allowed for nodes that are not root. If the leaf node is the root then we ignore this problem, because
 we can't have a smaller tree.\\
 
-\begin{minipage}{\linewidth}
-\captionof{figure}{Removing an entry from the red entry}
+\begin{minipage}{\columnwidth}
+\captionof{figure}{A snapshot of the bottom of an R Tree. $N_{parent}$ represents the rest of the tree, and $P_n$ represents the data objects.}
 \centering
 \begin{tikzpicture}
-    \node{rest of the tree}
-    child {node{$N_1$}[sibling distance=40mm]
-      child{node[color=red]{$N_2$(2 entries)} }
-      child{node{$N_3$(3 entries)}}
+  \draw (3cm,0) node{$M=3$};
+  \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
+  \tikzstyle{rtree}=[rectangle split, rectangle split horizontal,rectangle split ignore empty parts,draw]
+    \tikzstyle{every node}=[rtree]
+    \tikzstyle{level 1}=[sibling distance=45mm]
+    \tikzstyle{level 2}=[sibling distance=40mm]
+    \node{$N_{parent}$}
+    child {node{$N_1$ \nodepart{two} $N_2$}
+      child{node[color=red]{$P_1$ \nodepart{two} $P_2$} }
+      child{node{$P_3$ \nodepart{two} $P_4$ \nodepart{three} $P_5$}}
     };
-    \draw (3cm,0) node{$M=3$};
-    \draw (3cm,-0.5cm) node{$m= \lceil\frac{M}{2}\rceil = 2$};
 \end{tikzpicture}
 \label{fig:removing}
 \end{minipage}
 
 \paragraph{}
-In Figure \ref{fig:removing}, we see that the leaf with $2$ entries is going to have an entry removed. Because $m=3$, the red leaf node will be deleted and its other entry will be reinserted later.After that, because $N_1$ has only $1$ entry, it will be deleted, and we'll recurse through its children and find the $3$ entries is $N_3$ and store those for reinsertion as well.
+In Figure \ref{fig:removing}, we see that the leaf node $N_1$, which has two entries, is going to have an entry removed. Because $m=3$, the red leaf node will be deleted and its other entry will be reinserted later.After that, because $N_{parent}$ has only one entry, it will be deleted, and we'll recurse through its children and find the three entries is $N_2$ and store those for reinsertion as well.
 \paragraph{}
 If this node is not the root and has less than $m$ entries, then it is necessary to delete that node. But we don't want to destroy
 the other $m - 1$ entries, so we'll store each of the node's entries into a list, or other container type, to insert back into
