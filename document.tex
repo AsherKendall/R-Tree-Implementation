@@ -89,20 +89,28 @@ Note: In this example the leaf nodes contain the actual points or shapes($P_n$).
 This process is shown as pseudo code below
 
 
-\begin{lstlisting}    
-If at leaf:
-  Insert(Entry)
-  If(entries > M):
-    Split()
-  CurrentNode.entries.Add(Entry)
-  return
-For(each child):
-  If(ChildNode.IsEngulf(Entry)):
-    Insert(Node)
-  else:
-    For(each child):
-      Find difference in area if Entry were inserted
-    insert(NodeWithSmallestDifference);
+\begin{lstlisting}
+Insert(node, object)
+  best_node = null
+  min_area_change = inf
+  for entry in node.entries:
+    if entry.can_hold(object):
+      Insert(entry)
+      break
+    
+% If at leaf:
+%   Insert(Entry)
+%   If(entries > M):
+%     Split()
+%   CurrentNode.entries.Add(Entry)
+%   return
+% For(each child):
+%   If(ChildNode.IsEngulf(Entry)):
+%     Insert(Node)
+%   else:
+%     For(each child):
+%       Find difference in area if Entry were inserted
+%     insert(NodeWithSmallestDifference);
 \end{lstlisting}
 
 
