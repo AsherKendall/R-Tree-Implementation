@@ -36,6 +36,7 @@ that can't be stored in ram.  You can also take out parts of the R tree into ram
 of a program that could use R-trees is a mapping system of the world, where the large data set would be hard to store in memory.
 The R tree is also very good for nearest neighbor searching. Also R tree can be used to store any type of shape which allow for shapes
 of things such as buildings to be put in the minimum bounding rectangle. R trees have also been used a lot in databases for spacial data.
+Spliting can be one the most expensive parts of the R-tree, which makes it suitable for data thtat doesn't change often.
 
 \section{Basics}
 
@@ -121,7 +122,8 @@ When splitting our goal is to take a node that has too many entries and split it
 two nodes that contain at least $m$ entries and reduce the total area of the two nodes'
 MBR's as much as possible. We implemented the Linear Split in code, but there are other
 algorithms such as quadratic split and exhaustive split, the later of which checks every
-possible split and chooses the option with the least area. The Linear Split algorithm
+possible split and chooses the option with the least area. This means that the exhaustive spilit
+won't make any bad splits. The Linear Split algorithm
 is linear in $M$ and the number of dimensions of the space. It often does sub-optimal
 splits, but it is much better than the exhaustive complexity of $O(d^{M-1})$, where
 $d$ is the number of dimensions.
@@ -135,41 +137,8 @@ the other to node two. Then, for all other entries test which of the two nodes' 
 will change the least if it expands to encompass the entry, and add that entry to that node. Do this
 until either all entries are split between the two nodes or one of the nodes must claim the
 rest of the entries in order to have at least $m$ entries. Lastly, set the parent of the two
-new nodes to the parent of the old node, and delete the old node.
-
-This process is shown in pseudo code below.
-
-\begin{lstlisting}
-# Find Two Points with most extreme distances
-BiggestDiff = 0;
-For(child i for each child):
-  For(child z for each Child):
-    BiggestXDiff = max(
-      i.box.bottomleft.x-z.box.topleft.x,
-      i.box.topleft.x-z.box.bottomleft.x
-    );
-    BiggestYDiff = max(
-      i.box.bottomleft.y-z.box.topleft.y,
-      i.box.topleft.y-z.box.bottomleft.y
-    );
-    if(BiggestXDiff > BiggestDiff)
-    {
-        BiggestDiff = BiggestXDiff
-    }
-    if(BiggestYDiff > BiggestDiff)
-    {
-        BiggestDiff = BiggestYDiff
-    }
-#Make two nodes with the found extreme boxes
-Node newnode1 = new Node()
-Node newnode2 = new Node()
-
-#Remove from children
-Parent.Remove(box1)
-Parent.Remove(box2)
-
-#Take children from old node and put them in new ones
-\end{lstlisting}
+new nodes to the parent of the old node, and delete the old node. Keep in mind that you may have to
+recurse up the tree adjusting all conencted nodes.
 \section{Searching}
 \paragraph{}
 The next operation to do on an R Tree is a search for an object. Given an object, the R Tree will search itself for
