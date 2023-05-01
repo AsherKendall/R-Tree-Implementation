@@ -38,10 +38,12 @@ struct Point {
     bool operator==(Point rhs) { return x==rhs.x&&y==rhs.y;}
 };
 
+//Minimum Bounding Rectangle.
 struct MBR {
     Point tl,br; // top left point, bottom right point.
     int Area(){ return abs(br.x-tl.x) * abs(br.y-tl.y); }
     
+    // Returns whether this rectangle totally encloses 'object'.
     bool Contains(MBR object) { return object.tl.x>=tl.x && object.br.x<=br.x && object.tl.y>=tl.y && object.br.y<=br.y; }
 
     // Returns a new Minimum Bounding Rectangle if that box also has 'object' in it.
@@ -52,6 +54,7 @@ struct MBR {
 
 };
 
+// Gets an mbr of a point.
 MBR GetMBR(Point point) {
     float margin = 0.25f;
     return MBR{Point{point.x-margin,point.y-margin},Point{point.x+margin,point.y+margin}};
@@ -399,11 +402,14 @@ class RTree {
 public:
     NodeEntry root;
     bool better_split; // sorts elements for linear split
+
+    // inserts point 'point' into the R Tree.
     void Insert(Point point) {
         RecursiveInsert(root.data.child ,point);
         root.box = root.data.child->GetMBR();
     }
 
+    // Deletes point 'point'. Doesn't do anything if it couldn't find it.
     void Delete(Point point) {
         vector<Point> to_be_deleted;
         RecursiveDelete(root.data.child, point, &to_be_deleted);
@@ -417,28 +423,31 @@ public:
         }
     }
 
-    Node* FindLeaf(MBR QueryOBject,Node* node)
-    {
-        if (node->is_leaf)
-        {
-            return node;
-        }
+    // // Returns the node that contains 
+    // Node* FindLeaf(MBR QueryOBject,Node* node)
+    // {
+    //     if (node->is_leaf)
+    //     {
+    //         return node;
+    //     }
         
 
-        for (int i = 0; i < node->entries.size(); i++)
-        {
-            if (node->GetMBR().Contains(QueryOBject))
-            {
-                FindLeaf(QueryOBject,node->entries[i].data.child);
-            }
+    //     for (int i = 0; i < node->entries.size(); i++)
+    //     {
+    //         if (node->GetMBR().Contains(QueryOBject))
+    //         {
+    //             FindLeaf(QueryOBject,node->entries[i].data.child);
+    //         }
             
-        }
-    }
+    //     }
+    // }
 
+    // Prints the tree to the cmd line.
     void PrintTree() {
         RecursivePrintTree(root.data.child);
     }
 
+    // Determines if the tree doesn't follow any rules. For debugging only!
     void CheckHealth() {
         RecursiveCheckHealth(root.data.child);
     }
